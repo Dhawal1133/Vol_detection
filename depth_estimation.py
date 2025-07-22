@@ -4,7 +4,7 @@ import numpy as np
 import os
 from torchvision.transforms import Compose
 
-# --- Model Setup ---
+# Model Setup
 model_type = "DPT_Large"
 midas = torch.hub.load("intel-isl/MiDaS", model_type, trust_repo=True)
 midas_transforms = torch.hub.load("intel-isl/MiDaS", "transforms", trust_repo=True)
@@ -59,7 +59,7 @@ def save_depth_visualization(depth_map, img, roi_coords, out_path):
     cv2.rectangle(vis_color, (dw, dh), (wdw-1, hdh-1), (0,255,0), 2)
     cv2.imwrite(out_path, vis_color)
 
-# --- Input Images ---
+#  Input Images
 image_paths = {
     "full": r"D:/volume-detection-main/images/box_full.jpeg",
     "half": r"D:/volume-detection-main/images/box_half.jpeg"
@@ -68,7 +68,7 @@ image_paths = {
 os.makedirs("output", exist_ok=True)
 depth_stats = {}
 
-# --- Main Processing ---
+# Main Processing
 for label, path in image_paths.items():
     depth_map, img = estimate_depth(path)
     stats, roi = analyze_depth(depth_map, roi_ratio=1.0)  # Use full image
@@ -84,15 +84,15 @@ for label, path in image_paths.items():
     print(f"ROI std dev:      {stats['std']:.3f}")
     print(f"ROI shape: {roi.shape}")
 
-# --- Decision Logic ---
+
 full_mean = depth_stats["full"]["mean"]
 half_mean = depth_stats["half"]["mean"]
 
 print("\n=== RESULT ===")
 if half_mean > full_mean * 1.05:
-    print("⚠️  Container is NOT full (detected lower fill level).")
+    print(" Container is NOT full (detected lower fill level).")
 else:
-    print("✅ Container appears FULL.")
+    print(" Container appears FULL.")
 
 # Optional: print the difference for debugging
 print(f"\nMean depth difference: {half_mean - full_mean:.3f}")
